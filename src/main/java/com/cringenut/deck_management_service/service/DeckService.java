@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class DeckService {
 
-
+    // Use player amount later to determine deck min size
     public Deck generateDeck(Integer size, Integer playerAmount) {
         List<Card> deckCards = new ArrayList<>();
         // Remove ranks that are not used in the game
@@ -45,8 +46,23 @@ public class DeckService {
     }
 
     public ResponseEntity<GameSetup> generateGame(Integer size, Integer playerAmount) {
+        Deck deck = generateDeck(size, playerAmount);
 
+        GameSetup gameSetup = new GameSetup();
 
-        return null;
+        HashMap<String, List<Card>> playerHands = new HashMap<>();
+        for (int i = 1; i <= playerAmount; i++) {
+            List<Card> hand = new ArrayList<>();
+            for (int j = 0; j < 6; j++) {
+                hand.add(deck.getCards().remove(0)); // Deal 6 cards per player
+            }
+            playerHands.put("Player" + i, hand);
+        }
+
+        gameSetup.setPlayerHands(playerHands);
+        gameSetup.setRemainingDeck(deck.getCards());
+        gameSetup.setTrumpSuit(deck.getTrumpSuit());
+
+        return new ResponseEntity<>(gameSetup, HttpStatus.OK);
     }
 }

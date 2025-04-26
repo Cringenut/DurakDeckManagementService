@@ -1,6 +1,7 @@
 package com.cringenut.deck_management_service.controller;
 
 import com.cringenut.deck_management_service.model.Deck;
+import com.cringenut.deck_management_service.model.GameSetup;
 import com.cringenut.deck_management_service.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ public class DeckController {
     DeckService deckService;
 
     @PostMapping
-    public ResponseEntity<Deck> generateDeck(
+    public ResponseEntity<GameSetup> generateGame(
             @RequestParam Integer size,
             @RequestParam Integer playerAmount) {
-        return deckService.generateDeck(size, playerAmount);
+        return deckService.generateGame(size, playerAmount);
     }
 
 

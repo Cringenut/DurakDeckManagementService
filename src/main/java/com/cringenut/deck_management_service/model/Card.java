@@ -12,7 +12,7 @@ public class Card {
         this.suit = suit;
     }
 
-    Rank rank;
-    Suit suit;
+    private Rank rank;
+    private Suit suit;
 
 }
