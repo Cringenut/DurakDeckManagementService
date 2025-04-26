@@ -4,12 +4,12 @@ import com.cringenut.deck_management_service.enums.Rank;
 import com.cringenut.deck_management_service.enums.Suit;
 import com.cringenut.deck_management_service.model.Card;
 import com.cringenut.deck_management_service.model.Deck;
+import com.cringenut.deck_management_service.model.GameSetup;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class DeckService {
 
 
-    public ResponseEntity<Deck> generateDeck(Integer size, Integer playerAmount) {
+    public Deck generateDeck(Integer size, Integer playerAmount) {
         List<Card> deckCards = new ArrayList<>();
         // Remove ranks that are not used in the game
         List<Rank> totalRanks = new ArrayList<>(
@@ -36,8 +36,17 @@ public class DeckService {
         Collections.shuffle(deckCards);
 
         Deck deck = new Deck();
-        deck.setCards(deckCards);
 
-        return new ResponseEntity<>(deck, HttpStatus.OK);
+        // Set cards and choose the trump suit
+        deck.setCards(deckCards);
+        deck.setTrumpSuit(deckCards.get(0).getSuit());
+
+        return deck;
+    }
+
+    public ResponseEntity<GameSetup> generateGame(Integer size, Integer playerAmount) {
+
+
+        return null;
     }
 }

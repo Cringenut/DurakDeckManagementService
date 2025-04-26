@@ -3,45 +3,43 @@ package com.cringenut.deck_management_service.service;
 import com.cringenut.deck_management_service.model.Card;
 import com.cringenut.deck_management_service.model.Deck;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DeckServiceImplTest {
+class DeckServiceTest {
 
     DeckService deckService = new DeckService();
 
     @Test
     void testGenerateDeckReturnsNonNull() {
-        ResponseEntity<Deck> response = deckService.generateDeck(36, 4);
-        assertNotNull(response, "Response should not be null");
-        for (Card card : response.getBody().getCards()) {
-            System.out.println(card.getSuit() + " " + card.getRank());
-        }
+        Deck deck = deckService.generateDeck(36, 4);
+        assertNotNull(deck, "Deck should not be null");
     }
 
     @Test
     void testGenerateDeckReturnsDeckWithCards() {
-        ResponseEntity<Deck> response = deckService.generateDeck(52, 4);
-        Deck deck = response.getBody();
-        assertNotNull(deck, "Deck should not be null");
-        assertNotNull(deck.getCards(), "Deck cards should not be null");
+        Deck deck = deckService.generateDeck(52, 4);
+        assertNotNull(deck.getCards(), "Deck cards list should not be null");
         assertFalse(deck.getCards().isEmpty(), "Deck should contain cards");
     }
 
     @Test
-    void testGeneratedDeckHasCorrectNumberOfCards() {
-        ResponseEntity<Deck> response = deckService.generateDeck(52, 4);
-        Deck deck = response.getBody();
+    void testGeneratedDeckHasCorrectNumberOfCards36() {
+        Deck deck = deckService.generateDeck(36, 4);
+        assertEquals(36, deck.getCards().size(), "Deck should contain 36 cards");
+    }
+
+    @Test
+    void testGeneratedDeckHasCorrectNumberOfCards52() {
+        Deck deck = deckService.generateDeck(52, 4);
         assertEquals(52, deck.getCards().size(), "Deck should contain 52 cards");
     }
 
     @Test
     void testAllCardsAreUnique() {
-        ResponseEntity<Deck> response = deckService.generateDeck(52, 4);
-        Deck deck = response.getBody();
+        Deck deck = deckService.generateDeck(52, 4);
         List<Card> cards = deck.getCards();
         long uniqueCards = cards.stream()
                 .distinct()
