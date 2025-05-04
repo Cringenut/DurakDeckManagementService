@@ -9,17 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class DeckService {
 
     // Use player amount later to determine deck min size
     public Deck generateDeck(Integer size, Integer playerAmount) {
-        List<Card> deckCards = new ArrayList<>();
+        Stack<Card> deckCards = new Stack<>();
         // Remove ranks that are not used in the game
         List<Rank> totalRanks = new ArrayList<>(
                 List.of(Rank.values())
@@ -45,24 +42,36 @@ public class DeckService {
         return deck;
     }
 
-    public ResponseEntity<GameSetup> generateGame(Integer size, Integer playerAmount) {
-        Deck deck = generateDeck(size, playerAmount);
+    public List<List<Card>> dealPlayerHands(Deck deck, Integer playerAmount) {
+        List<List<Card>> playerHands = new ArrayList<>();
 
-        GameSetup gameSetup = new GameSetup();
-
-        HashMap<String, List<Card>> playerHands = new HashMap<>();
-        for (int i = 1; i <= playerAmount; i++) {
-            List<Card> hand = new ArrayList<>();
-            for (int j = 0; j < 6; j++) {
-                hand.add(deck.getCards().remove(0)); // Deal 6 cards per player
-            }
-            playerHands.put("Player" + i, hand);
+        // Initialize each player's hand
+        for (int i = 0; i < playerAmount; i++) {
+            playerHands.add(new ArrayList<>());
         }
 
+        // Deal 6 cards to each player
+        for (int i = 0; i < playerAmount; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (!deck.getCards().isEmpty()) {
+                    playerHands.get(i).add(deck.getCards().pop());
+                }
+            }
+        }
+
+        return playerHands;
+    }
+
+    public GameSetup createGame(Integer size, Integer playerAmount) {
+        Deck deck = generateDeck(size, playerAmount);
+        List<List<Card>> playerHands = dealPlayerHands(deck, playerAmount);
+
+        GameSetup gameSetup = new GameSetup();
+        gameSetup.setDeck(deck);
         gameSetup.setPlayerHands(playerHands);
-        gameSetup.setRemainingDeck(deck.getCards());
         gameSetup.setTrumpSuit(deck.getTrumpSuit());
 
-        return new ResponseEntity<>(gameSetup, HttpStatus.OK);
+
+        return gameSetup;
     }
 }

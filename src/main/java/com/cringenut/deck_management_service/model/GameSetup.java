@@ -5,12 +5,13 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 @Data
 public class GameSetup {
 
-    private Map<String, List<Card>> playerHands;
-    private List<Card> remainingDeck;
+    private Deck deck;
+    private List<List<Card>> playerHands;
     private Suit trumpSuit;
 
 }

@@ -6,11 +6,12 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 @Data
 public class Deck {
 
-    private List<Card> cards = new ArrayList<>();
+    private Stack<Card> cards = new Stack<>();
     private Suit trumpSuit = Suit.SPADES;
 
 }
