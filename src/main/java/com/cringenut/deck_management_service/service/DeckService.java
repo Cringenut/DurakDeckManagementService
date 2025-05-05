@@ -42,20 +42,30 @@ public class DeckService {
         return deck;
     }
 
-    public List<List<Card>> dealPlayerHands(Deck deck, Integer playerAmount) {
-        List<List<Card>> playerHands = new ArrayList<>();
+    public List<HashMap<Suit, List<Card>>> dealPlayerHands(Deck deck, Integer playerAmount) {
+        List<HashMap<Suit, List<Card>>> playerHands = new ArrayList<>();
 
-        // Initialize each player's hand
+        // Initialize empty hands
         for (int i = 0; i < playerAmount; i++) {
-            playerHands.add(new ArrayList<>());
+            HashMap<Suit, List<Card>> hand = new HashMap<>();
+            for (Suit suit : Suit.values()) {
+                hand.put(suit, new ArrayList<>());
+            }
+            playerHands.add(hand);
         }
 
-        // Deal 6 cards to each player
-        for (int i = 0; i < playerAmount; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (!deck.getCards().isEmpty()) {
-                    playerHands.get(i).add(deck.getCards().pop());
-                }
+        // Deal exactly 6 cards to each player
+        for (int i = 0; i < 6 * playerAmount; i++) {
+            if (deck.getCards().isEmpty()) break;
+            Card card = deck.getCards().pop();
+            HashMap<Suit, List<Card>> currentPlayerHand = playerHands.get(i % playerAmount);
+            currentPlayerHand.get(card.getSuit()).add(card);
+        }
+
+        // Sort each player's suit lists
+        for (HashMap<Suit, List<Card>> hand : playerHands) {
+            for (List<Card> cards : hand.values()) {
+                cards.sort(Comparator.comparingInt(c -> c.getRank().getValue()));
             }
         }
 
@@ -64,7 +74,7 @@ public class DeckService {
 
     public GameSetup createGame(Integer size, Integer playerAmount) {
         Deck deck = generateDeck(size, playerAmount);
-        List<List<Card>> playerHands = dealPlayerHands(deck, playerAmount);
+        List<HashMap<Suit, List<Card>>> playerHands = dealPlayerHands(deck, playerAmount);
 
         GameSetup gameSetup = new GameSetup();
         gameSetup.setDeck(deck);
